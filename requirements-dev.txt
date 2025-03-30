@@ -22,4 +22,4 @@ langchain_core
 langchain_groq
 librosa
 soundfile
-PyAudio
+pyaudio
