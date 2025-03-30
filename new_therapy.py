@@ -1648,4 +1648,7 @@ def serve_generated_music(filename):
     return send_from_directory(GENERATED_MUSIC_DIR, filename)
 
 if __name__ == '__main__':
-    app.run(debug = True,  host='0.0.0.0')
+    port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
+    app.run(host="0.0.0.0", port=port, debug=False)
+
+
