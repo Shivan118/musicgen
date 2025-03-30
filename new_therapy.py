@@ -45,13 +45,17 @@ login_manager.init_app(app)
 
 mail = Mail(app)
 
-# Get the JSON file path from .env
-cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+# Get the Base64-encoded credentials from the environment variable
+encoded_creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
-# Initialize Firebase using the credentials file
-cred = credentials.Certificate(cred_path)
-if not cred_path or not os.path.exists(cred_path):
-    raise FileNotFoundError(f"Invalid credentials path: {cred_path}")
+if not encoded_creds:
+    raise ValueError("FIREBASE_CREDENTIALS_BASE64 is not set!")
+
+# Decode the Base64 string into a JSON dictionary
+decoded_creds = json.loads(base64.b64decode(encoded_creds).decode())
+
+# Initialize Firebase using the decoded credentials
+cred = credentials.Certificate(decoded_creds)
 firebase_admin.initialize_app(cred, {
     'storageBucket': os.getenv("FIREBASE_STORAGE_BUCKET")
 })
