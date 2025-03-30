@@ -19,28 +19,40 @@ from flask_mail import Mail, Message
 from dotenv import load_dotenv
 load_dotenv()
 
-# Construct credentials dictionary from environment variables
+# Fetch environment variables safely
+def get_env_variable(var_name, required=True):
+    value = os.getenv(var_name)
+    if required and value is None:
+        raise ValueError(f"Environment variable {var_name} is not set.")
+    return value
+
+# Fetch and process GOOGLE_PRIVATE_KEY
+private_key = get_env_variable("GOOGLE_PRIVATE_KEY")
+if private_key:
+    private_key = private_key.replace('\\n', '\n')  # Convert escaped newlines
+
+# Construct Firebase credentials dictionary
 firebase_creds = {
-    "type": os.getenv("GOOGLE_TYPE"),
-    "project_id": os.getenv("GOOGLE_PROJECT_ID"),
-    "private_key_id": os.getenv("GOOGLE_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("GOOGLE_PRIVATE_KEY").replace('\\n', '\n'),  # Convert \n to new lines
-    "client_email": os.getenv("GOOGLE_CLIENT_EMAIL"),
-    "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-    "auth_uri": os.getenv("GOOGLE_AUTH_URI"),
-    "token_uri": os.getenv("GOOGLE_TOKEN_URI"),
-    "auth_provider_x509_cert_url": os.getenv("GOOGLE_AUTH_PROVIDER_CERT_URL"),
-    "client_x509_cert_url": os.getenv("GOOGLE_CLIENT_CERT_URL"),
-    "universe_domain": os.getenv("GOOGLE_UNIVERSE_DOMAIN"),
+    "type": get_env_variable("GOOGLE_TYPE"),
+    "project_id": get_env_variable("GOOGLE_PROJECT_ID"),
+    "private_key_id": get_env_variable("GOOGLE_PRIVATE_KEY_ID"),
+    "private_key": private_key,
+    "client_email": get_env_variable("GOOGLE_CLIENT_EMAIL"),
+    "client_id": get_env_variable("GOOGLE_CLIENT_ID"),
+    "auth_uri": get_env_variable("GOOGLE_AUTH_URI"),
+    "token_uri": get_env_variable("GOOGLE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": get_env_variable("GOOGLE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": get_env_variable("GOOGLE_CLIENT_CERT_URL"),
+    "universe_domain": get_env_variable("GOOGLE_UNIVERSE_DOMAIN", required=False),
 }
 
-# Initialize Firebase using the credentials from environment variables
+# Initialize Firebase with credentials
 cred = credentials.Certificate(firebase_creds)
 firebase_admin.initialize_app(cred, {
-    'storageBucket': os.getenv("FIREBASE_STORAGE_BUCKET")
+    'storageBucket': get_env_variable("FIREBASE_STORAGE_BUCKET")
 })
 
-# Firestore and Storage
+# Initialize Firestore and Storage
 db = firestore.client()
 bucket = storage.bucket()
 
@@ -48,16 +60,19 @@ bucket = storage.bucket()
 doc = db.collection("Signal").document("YVNeDHCXVFvg0G3wZc6c")
 doc.set({"play": "true"})
 
-# Fetch Firebase Credentials
+print("Firestore write successful!")
+
+# Fetch Firebase config
 config = {
-    "apiKey": os.getenv("FIREBASE_API_KEY"),
-    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
-    "projectId": os.getenv("FIREBASE_PROJECT_ID"),
-    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
-    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
-    "appId": os.getenv("FIREBASE_APP_ID"),
-    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID"),
+    "apiKey": get_env_variable("FIREBASE_API_KEY"),
+    "authDomain": get_env_variable("FIREBASE_AUTH_DOMAIN"),
+    "projectId": get_env_variable("FIREBASE_PROJECT_ID"),
+    "storageBucket": get_env_variable("FIREBASE_STORAGE_BUCKET"),
+    "messagingSenderId": get_env_variable("FIREBASE_MESSAGING_SENDER_ID"),
+    "appId": get_env_variable("FIREBASE_APP_ID"),
+    "measurementId": get_env_variable("FIREBASE_MEASUREMENT_ID"),
 }
+
 
 class User(flask_login.UserMixin): 
     def __init__(self, id, username, type):
