@@ -1,0 +1,535 @@
+<html>
+    <head>
+        <title>SonicSerenity</title>
+        <link rel="icon" href="/static/images/just_logo.png" type="image/x-icon"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+        <link href="https://assets-global.website-files.com/5d80e079329a007369704428/css/incadence.webflow.9540063aa.min.css" rel="stylesheet" type="text/css"/>
+        <link href="https://assets-global.website-files.com/5d80e079329a007369704428/css/incadence.webflow.495033cb9.min.css" rel="stylesheet" type="text/css"/>
+        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Karla:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <script src="https://kit.fontawesome.com/c148ce58db.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/static/css/steps_style.css">
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+        <style>
+            .nav_ a{
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        {% include 'navbar.html' %}
+        <div id="loading2" style="display: none;">
+            <center><img style="width:10%; height:17%; margin-top: 20%;" src="/static/images/loading_gif.gif" alt="Loading..."></center>
+            <p style="width: 100%; text-align: center;">
+                <span>Preparing your audio </span>
+                <span class="dot-container">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </span>
+            </p>  
+        </div>
+        <div id="loading3" style="display: none;">
+            <center><img style="width:10%; height:17%; margin-top: 20%;" src="/static/images/loading_gif.gif" alt="Loading..."></center>
+            <p style="width: 100%; text-align: center;">
+                <span>Ending playback </span>
+                <span class="dot-container">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </span>
+            </p>  
+        </div>
+        <div id="loading1" style="display: none;">
+            <center><img style="width:10%; height:17%; margin-top: 20%;" src="https://media.tenor.com/te6J1RcqwyYAAAAC/insta-cam-camera.gif" alt="Loading..."></center>
+        </div>
+        <div class="therapy">
+    
+            <div class="section1">
+                <div class="step1_bg">
+                    <img src="/static/images/bg.png"/>
+                </div>
+                <div class="step-1">
+                    <h2> 𝄞tep 1</h2>
+                    <p>Here are the some well researched options of therapeutic music to help you pick one that you find appealing</p>
+                    <div class="songs">
+                        <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Tibetan.wav</p>
+                            <div style="display: inline;">
+                                <i id="tibetan_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('tibetan')"></i>
+                                <img id="tibetan_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_t" onclick="set_audio('tibetan.wav', 's_t')">Select</button>
+                        </div>
+                        <audio id="tibetan_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Ftibetan_W5FtpnGO.wav?alt=media&token=a0d4bfb5-7d67-4e57-8689-80740fb6e910" type="audio/wav">
+                        </audio>
+                        <span >Tibetan Healing Sounds Singing Bowls</span>
+                        <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Om Chanting.wav</p>
+                            <div style="display: inline;">
+                                <i id="om_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('om')"></i>
+                                <img id="om_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_om" onclick="set_audio('om.wav', 's_om')">Select</button>
+                        </div>
+                        <audio id="om_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Fom_5p4UYK6V.wav?alt=media&token=4137cedf-2f18-42fb-823b-2f04bf692335" type="audio/wav">
+                        </audio>
+                        <span>OM Chanting Mantra Healing Heart Chakra Activation Chant</span>
+                        <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Heal.wav</p>
+                            <div style="display: inline;">
+                                <i id="heal_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('heal')"></i>
+                                <img id="heal_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_h" onclick="set_audio('heal.wav', 's_h')">Select</button>
+                        </div>
+                        <audio id="heal_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Fheal_3NLobutA.wav?alt=media&token=cdf207dc-109a-407f-bcb9-a5c96b6ad608" type="audio/wav">
+                        </audio>
+                        <span>Healing Music for the Mind and Body</span>
+                        <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Nature.wav</p>
+                            <div style="display: inline;">
+                                <i id="nature_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('nature')"></i>
+                                <img id="nature_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_n" onclick="set_audio('nature.wav', 's_n')">Select</button>
+                        </div>
+                        <audio id="nature_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Fnature%20(2).wav?alt=media&token=8a332c13-b520-432f-b065-8ab53f504052" type="audio/wav">
+                        </audio>
+                        <span> Soft Music with Rain and Nature Sounds in a Miracle Tone</span>
+                         <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Crystal.wav</p>
+                            <div style="display: inline;">
+                                <i id="crystal_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('crystal')"></i>
+                                <img id="crystal_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_c" onclick="set_audio('crystal.wav', 's_c')">Select</button>
+                        </div>
+                        <audio id="crystal_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Fcrystal_AQMU0t3P.wav?alt=media&token=3a3aa1a5-a530-49da-9cc3-3212dba525d8" type="audio/wav">
+                        </audio>
+                        <span> Crystal Singing Bowls Soundbath </span>
+                         <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Marimba.mp3</p>
+                            <div style="display: inline;">
+                                <i id="marimba_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('marimba')"></i>
+                                <img id="marimba_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_m" onclick="set_audio('marimba.mp3', 's_m')">Select</button>
+                        </div>
+                        <audio id="marimba_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Fmarimba_40THsms6.mp3?alt=media&token=0c0085dd-6a0d-40cc-8fef-3d15fb1fa05b" type="audio/mpeg">
+                        </audio>
+                        <span>Marimba Meditation Music</span>
+                        <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Space.wav</p>
+                            <div style="display: inline;">
+                                <i id="space_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('space')"></i>
+                                <img id="space_img" src="/static/images/wave.png" width="100" height="40"/>
+                            </div>
+                            <button id="s_s" onclick="set_audio('space.wav', 's_s')">Select</button>
+                        </div>
+                        <audio id="space_audio" style="display: none;">
+                            <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/audio%2Fspace_5ySgori9.wav?alt=media&token=48f004bb-a645-4d70-b3e5-ae5d6e1381db" type="audio/wav">
+                        </audio>
+                        <span>Floating in Space with Calm Water Sounds</span>
+                        {% for i in custom_audio %}
+                            <div style="height:fit-content;">
+                                <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                                <p style="height: fit-content;"> &nbsp;&nbsp;{{i}}</p>
+                                <div style="display: inline;">
+                                    <i id="{{i}}_icon" class="fa-solid fa-play" style="color: #29696e;font-size: 20px; text-align: center; vertical-align: middle; padding-top: 10; margin-left: 10px;" onclick="audio_control('{{i}}')"></i>
+                                    <img id="{{i}}_img" src="/static/images/wave.png" width="100" height="40"/>
+                                </div>
+                                <button id="{{i}}" onclick="set_audio('{{i}}', '{{i}}')">Select</button>
+                            </div>
+                            <audio id="{{i}}_audio" style="display: none;">
+                                <source src="{{custom_audio_url[i]}}" type="audio/wav">
+                            </audio>
+                            <span>Custom Audio</span>
+                        {% endfor %}
+                        <div>
+                            <img src="/static/images/audio_logo.png" width="20" height="20"/>
+                            <p> &nbsp;&nbsp;Custom File</p>
+                            <img src="/static/images/wave.png" width="100" height="40"/>
+                            <form action="/upload" method="post" onsubmit="handleUpload()" enctype="multipart/form-data">
+                                <span>Please Upload a Theraputic Instrumental Track of Your Choice</span><br>
+                                <input type="file" id="audioFile" name="audio_file" accept=".mp3, .wav, .ogg"><br><br>
+                                <input id="cb" type="checkbox" name="customize"/> <span> Don't Customize the audio</span>
+                                <input id="up" type="submit" value="Upload" style="float: right; margin-right: 92px; margin-top: -10px;">
+                            </form>
+                            <br>
+                            <p id="pro" style="display: none;"> 
+                                <span>Processing </span>
+                                <span class="dot-container">
+                                  <span class="dot"></span>
+                                  <span class="dot"></span>
+                                  <span class="dot"></span>
+                                </span>
+                            </p>
+                            
+                            <div class="p_container">
+                                <div class="progress">
+                                    <div class="progress_bar" id="myBar"></div>
+                                </div>  
+                                <p class="loading-container">
+                                    <span id="ptext">Uploading </span>
+                                    <span class="dot-container" id="d">
+                                      <span class="dot"></span>
+                                      <span class="dot"></span>
+                                      <span class="dot"></span>
+                                    </span>
+                                </p>  
+                            </div>
+                        </div>
+                        <form id="load_a" style="display: none;" action="/load" method="post" enctype="multipart/form-data">
+                          <input id="a_name" type="hidden" name="audio"/>
+                          <input id="i" type="hidden" name="id"/>
+                            <input type="submit" value="upload">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 10px; display: none; margin-top: -250px;" class="dummy">
+            </div>
+            <BR><BR><BR>
+
+            <div class="section2">
+                <div class="step2_bg">
+                    <img src="/static/images/step2_bg.png"/>
+                </div>
+                <div class="step-2">
+                    <h2> 𝄞tep 2</h2>
+                    <p>Turn on your camera <big><big><big>📷</big></big></big></p>
+                    <div class="camera">
+                        <form  action = "/turn_camera_on" method = "POST" enctype = "multipart/form-data">
+                            <input type="hidden" id="audio_name" name="audio_name" value="g">
+                            <input type="submit" id="cam" class="button" value="Turn On">
+                        <!-- <a href="/who-we-serve" class="button cta-button w-button">Get Started</a> -->
+                        </form>
+                    </div>
+                    <br>
+                    <p>Sonic Serenity - your AI Music Therapist - will dynamically personalise your choice of song for your emotional wellbeing and mental health based on your  emotions.
+                    </p>
+                </div>
+            </div>
+
+            <BR><BR><BR>
+
+            <div class="section3">
+                <div class="step3_bg">
+                    <img src="/static/images/step3_bg.jpg"/>
+                </div>
+                <div class="step-3">
+                    <h1> 𝄞tep 3</h1>
+                    <br>
+                    <p>Please click on the play button below. Put on your ear phones or just play the music on your speakers but remember to stay in the camera frame for the therapy to work!
+                    </p>
+                    <div class="camera">
+                        <form  action = "/turn_audio_on" onsubmit="something()"  method = "POST" enctype = "multipart/form-data">
+                            <input id="pl" type="submit" class="button" value="Play" >
+                        </form>
+                        <!-- <button onclick="something()">fdshds</button> -->
+                    </div>
+                    <br>
+                    <!-- <p>Sonic Serenity uses solfeggio frequencies which are a set of 9 electromagnetic tones that are reputed to have the power to heal and raise consciousness. They form the basis of many ancient sacred music traditions dating back as far as the 8th century, such as the Gregorian chants and Indian Sanskrit chants. At the heart of solfeggio frequencies is the belief that the vibrational signature of certain sounds, ranging from 174 Hz to 963 Hz, can positively impact our mental, physical and spiritual health. For example, the 417Hz frequency can help remove negative energy from your aura and environment, can heal shame and anger based thinking. Both of these emotions are conducive to attracting negative outcomes and can aid in restful sleep
+                    </p> -->
+                </div>
+            </div>
+
+            <BR><BR><BR>
+
+            <div class="section4">
+                <div class="step4_bg">
+                    <img src="/static/images/services_step2_track_graph.png"/>
+                </div>
+                <div class="step-4">
+                    <h1> 𝄞tep 4</h1>
+                    <br>
+                    <p> Track your Progress throughout the session.
+                    </p>
+                    <div class="camera">
+                        <form id="graph" action = "/show_graph"  method = "POST" enctype = "multipart/form-data">
+                            <input id="gr" type="submit" class="button" value="Show Graph">
+                        </form>
+                    </div>
+                    <br>
+                    <!-- <p>Sonic Serenity uses solfeggio frequencies which are a set of 9 electromagnetic tones that are reputed to have the power to heal and raise consciousness. They form the basis of many ancient sacred music traditions dating back as far as the 8th century, such as the Gregorian chants and Indian Sanskrit chants. At the heart of solfeggio frequencies is the belief that the vibrational signature of certain sounds, ranging from 174 Hz to 963 Hz, can positively impact our mental, physical and spiritual health. For example, the 417Hz frequency can help remove negative energy from your aura and environment, can heal shame and anger based thinking. Both of these emotions are conducive to attracting negative outcomes and can aid in restful sleep
+                    </p> -->
+                </div>
+            </div>
+        </div>
+        {% include 'footer.html' %}
+        <div id="vid">
+            <video id="v" autoplay muted loop>
+                <source src="https://firebasestorage.googleapis.com/v0/b/sonicserenity-a3083.appspot.com/o/video%2Fsoothing.mp4?alt=media&token=eab5680d-2f13-47ef-b04f-c077a8fb3862" type="video/mp4">
+            </video>
+            <div id="rhs">
+                <form id="graph" action = "/stop_audio"  method = "POST" enctype = "multipart/form-data">
+                    <input class="s" type="submit" class="button" value="" 
+                    style="background-image: url('/static/images/stop_button.png'); background-repeat: no-repeat; background-size: contain; background-position: center;   
+                    width: 50px; height: 50px; border-radius: 30px;">
+                </form>
+                <!-- <div  onclick="stop_btn()" ></div>       -->
+                <img id="img" src="{{ url_for('video_feed') }}">
+            </div>
+        </div>
+        <script>
+
+            var data = "{{step}}";
+            var idi = "{{id}}";
+            let intervalId;
+            var flag = true;
+
+            function updateMargin(){
+                var relativeDiv = document.getElementsByClassName("step1_bg")[0];
+                var absoluteDiv = document.getElementsByClassName("step-1")[0];
+
+                var absoluteHeight = absoluteDiv.offsetHeight;
+                relativeDiv.style.marginBottom = absoluteHeight + 'px';
+            }
+            updateMargin();
+
+            // console.log(document.getElementById("tibetan_audio").duration);
+        
+            // console.log(document.getElementById("marimba_audio").duration);
+            function audio_control(id){
+                if(flag){
+                    document.getElementById(id + "_audio").play();
+                    document.getElementById(id + "_img").src = "/static/images/sound_wave.gif";
+                    document.getElementById(id + "_icon").classList.remove("fa-play");
+                    document.getElementById(id + "_icon").classList.add("fa-stop");
+                    document.getElementById(id + "_icon").style.color = "rgb(243, 136, 136)";
+                    flag = !flag;
+                }
+                else{
+                    document.getElementById(id + "_audio").pause();
+                    document.getElementById(id + "_img").src = "/static/images/wave.png";
+                    document.getElementById(id + "_icon").classList.add("fa-play");
+                    document.getElementById(id + "_icon").classList.remove("fa-stop");
+                    document.getElementById(id + "_icon").style.color = "#29696e";
+                    flag = !flag;
+                }
+               
+            }
+        
+            if(data == "1"){
+                document.addEventListener("DOMContentLoaded", function() {
+                    setTimeout(function() {
+                        const el = document.getElementsByClassName("section2")[0];
+                        el.scrollIntoView({block: "center", behavior:"smooth"});
+                    }, 200);
+                });
+            }
+            if(data == "2"){
+                document.addEventListener("DOMContentLoaded", function() {
+                    var loading = document.getElementById("loading1");
+                        loading.style.display = "block";
+                    document.getElementsByClassName("nav_")[0].style.display = "none";
+                    document.getElementsByClassName("therapy")[0].style.display = "none";
+                    document.getElementsByClassName("footer-section")[0].style.display = "none";
+                    document.getElementById("cam").value = "Camera On 📸"
+                    setTimeout(function(){
+                        loading.style.display = "none";
+                        const el = document.getElementsByClassName("therapy")[0];
+                        el.style.display = "flex";
+                        document.getElementsByClassName("nav_")[0].style.display = "flex"; 
+                        document.getElementsByClassName("footer-section")[0].style.display = "block"; 
+                        const element = document.getElementsByClassName("section2")[0];
+                        element.scrollIntoView({block: "center"});
+                        setTimeout(function() {
+                            const el = document.getElementsByClassName("section3")[0];
+                            el.scrollIntoView({block: "center", behavior:"smooth"});
+                        }, 1000);
+                    }, 4000);
+                });
+            }
+            if(data == "3"){
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.getElementById("vid").style.display = "block";
+                    const el = document.getElementsByClassName("therapy")[0];
+                    el.style.display = "none";
+                    document.getElementsByClassName("footer-section")[0].style.display = "none";
+                    document.getElementsByClassName("nav_")[0].style.display = "none";  
+                    
+                });
+            }
+            if(data == "4"){
+                stop_btn();
+            }
+            if(data == "5"){
+                const el = document.getElementsByClassName("dummy")[0];
+                el.style.display = "block";
+                el.scrollIntoView({block: "center", behavior:"smooth"});
+                document.getElementsByClassName("p_container")[0].style.display = "flex";
+                const e = document.getElementsByClassName("section2")[0];
+                // e.style.marginTop = "-5%";
+                document.getElementById("up").style.display = "none";
+                var a = "{{checkbox}}";
+                console.log(a);
+                if( a == "yes"){
+                    document.getElementById("cb").checked = true;
+                }
+                move();
+            }
+        
+
+            function set_audio(name, id){
+                document.getElementById("audio_name").value = name;
+                document.getElementById("a_name").value = name;
+                document.getElementById("i").value = id;
+                document.getElementById(id).innerHTML = "Selected";
+                document.getElementById(id).style.marginLeft = "7%";
+                document.getElementById(id).style.backgroundColor = "#238c94";
+                setTimeout(function() {
+                    document.getElementById("load_a").submit();
+                    // const el = document.getElementsByClassName("section2")[0];
+                    // el.scrollIntoView({block: "center", behavior:"smooth"});
+                }, 500);
+            }
+
+            function stop_btn(){
+                document.getElementById("loading3").style.display  = 'block';
+                document.getElementById("vid").style.display = "none";
+                const el = document.getElementsByClassName("therapy")[0];
+                el.style.display = "none";
+                document.getElementsByClassName("nav_")[0].style.display = "none";
+                document.getElementsByClassName("footer-section")[0].style.display = "none"; 
+
+                setTimeout(function() {
+                    document.getElementById("vid").style.display = "none";
+                    document.getElementById("loading3").style.display  = 'none';
+                    const el = document.getElementsByClassName("therapy")[0];
+                    el.style.display = "flex";
+                    document.getElementsByClassName("nav_")[0].style.display = "flex"; 
+                    document.getElementsByClassName("footer-section")[0].style.display = "block"; 
+                    const eli = document.getElementsByClassName("section4")[0];
+                    eli.scrollIntoView({block: "center", behavior:"smooth"});
+                }, 5000);
+            }
+
+            function handleUpload() {
+                document.getElementById("pro").style.display = "flex";
+                var inputElement = document.getElementById('audioFile');
+                var uploadedFile = inputElement.files[0];
+                document.getElementById("up").style.display = "none";
+                // if (uploadedFile) {
+                //     var fileName = uploadedFile.name;
+                //     console.log(fileName);
+                //     set_audio(fileName);
+                // }
+            }
+
+            function showLoadingVideo() {
+                document.getElementById("loading2").style.display  = 'block';
+                document.getElementsByClassName("nav_")[0].style.display = "none";
+                document.getElementsByClassName("therapy")[0].style.display = "none";
+                document.getElementsByClassName("footer-section")[0].style.display = "none";
+                console.log("Loading video displayed");
+            }
+
+            function hideLoadingVideo() {
+                clearInterval(intervalId);
+                document.getElementById("loading2").style.display  = 'none';
+                document.getElementById("vid").style.display = "block";
+                const el = document.getElementsByClassName("therapy")[0];
+                el.style.display = "none";
+                document.getElementsByClassName("nav_")[0].style.display = "none";
+                document.getElementsByClassName("footer-section")[0].style.display = "none";
+                console.log("Loading video hidden");
+            }
+
+            function something(){
+                console.log("in");
+                // var loading = document.getElementById("loading2");
+                // loading.style.display = "block";
+                
+                checkDatabase();
+                intervalId = setInterval(checkDatabase, 1000);
+                // setTimeout(function() {
+                //     document.getElementById("vid").style.display = "block";
+                //     const el = document.getElementsByClassName("therapy")[0];
+                //     el.style.display = "none";
+                //     loading.style.display = "none";
+                //     document.getElementsByClassName("w-container")[0].style.display = "none";
+                // }, 7000);
+            }
+
+            function move() {
+                var elem = document.getElementById("myBar");
+                var width = 1;
+                var intervalId = setInterval(frame, 40000 / 100); //90
+
+                function frame() {
+                    if (width >= 100) {
+                        clearInterval(intervalId);
+                        document.getElementById("d").style.display = "none";
+                        document.getElementById("ptext").innerHTML = "Uploaded";
+
+                        setTimeout(function() {
+                            const e = document.getElementsByClassName("dummy")[0];
+                            e.style.display = "none";
+                            const el = document.getElementsByClassName("section2")[0];
+                            el.scrollIntoView({block: "center", behavior:"smooth"});
+                        }, 1000);
+                    } else {
+                        width++;
+                        elem.style.width = width + "%";
+                        elem.innerHTML = width + "%";
+                    }
+                }
+            }
+
+            </script>
+        <script type="module">
+            import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js';
+            import { getFirestore, doc, getDoc, collection } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js';
+            
+            const firebaseConfig = {
+                            apiKey: "AIzaSyD8HRRmbVrb-DzJJNBs7P1FmpyGZWwEIfQ",
+                            authDomain: "sonicserenity-a3083-3ed0b.firebaseapp.com",
+                            projectId: "sonicserenity-a3083-3ed0b",
+                            storageBucket: "sonicserenity-a3083-3ed0b.appspot.app",
+                            messagingSenderId: "181011993879",
+                            appId: "1:181011993879:web:bdff83db061334e01cd352",
+                            measurementId: "G-Z9XZWKM94G"
+                            };
+            
+            const app = initializeApp(firebaseConfig);
+    
+            const db = getFirestore(app);
+            
+            window.checkDatabase = function() {
+                getDoc(doc(db, "SIgnal", "YVNeDHCXVFvg0G3wZc6c")).then(docSnap => {
+                    if (docSnap.exists()) {
+                        console.log("Data exists");
+                        const data = docSnap.data();
+                        const play = data["play"];
+
+                        if (play === "true") {
+                            showLoadingVideo();
+                        } else if (play === "false") {
+                            hideLoadingVideo();
+                        }
+                    } else {
+                        console.log("No data");
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
