@@ -19,59 +19,83 @@ from flask_mail import Mail, Message
 from dotenv import load_dotenv
 load_dotenv()
 
-# Fetch environment variables safely
-def get_env_variable(var_name, required=True):
-    value = os.getenv(var_name)
-    if required and value is None:
-        raise ValueError(f"Environment variable {var_name} is not set.")
-    return value
+# Read credentials from environment variables
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 
-# Fetch and process GOOGLE_PRIVATE_KEY
-private_key = get_env_variable("GOOGLE_PRIVATE_KEY")
-if private_key:
-    private_key = private_key.replace('\\n', '\n')  # Convert escaped newlines
+app = Flask("SonicSerenity")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 
-# Construct Firebase credentials dictionary
-firebase_creds = {
-    "type": get_env_variable("GOOGLE_TYPE"),
-    "project_id": get_env_variable("GOOGLE_PROJECT_ID"),
-    "private_key_id": get_env_variable("GOOGLE_PRIVATE_KEY_ID"),
-    "private_key": private_key,
-    "client_email": get_env_variable("GOOGLE_CLIENT_EMAIL"),
-    "client_id": get_env_variable("GOOGLE_CLIENT_ID"),
-    "auth_uri": get_env_variable("GOOGLE_AUTH_URI"),
-    "token_uri": get_env_variable("GOOGLE_TOKEN_URI"),
-    "auth_provider_x509_cert_url": get_env_variable("GOOGLE_AUTH_PROVIDER_CERT_URL"),
-    "client_x509_cert_url": get_env_variable("GOOGLE_CLIENT_CERT_URL"),
-    "universe_domain": get_env_variable("GOOGLE_UNIVERSE_DOMAIN", required=False),
-}
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
 
-# Initialize Firebase with credentials
-cred = credentials.Certificate(firebase_creds)
+# app.config.update(
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_HTTPONLY=True,
+#     SESSION_COOKIE_SAMESITE='Lax',
+# )
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+# login_manager.login_view = 'login'
+# login_manager.session_protection = "strong"
+
+mail = Mail(app)
+
+# Get the JSON file path from .env
+cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
+# Initialize Firebase using the credentials file
+cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred, {
-    'storageBucket': get_env_variable("FIREBASE_STORAGE_BUCKET")
+    'storageBucket': os.getenv("FIREBASE_STORAGE_BUCKET")
 })
 
-# Initialize Firestore and Storage
 db = firestore.client()
 bucket = storage.bucket()
 
-# Test Firestore Connection
-doc = db.collection("Signal").document("YVNeDHCXVFvg0G3wZc6c")
-doc.set({"play": "true"})
+doc = db.collection("SIgnal").document("YVNeDHCXVFvg0G3wZc6c")
+doc.set({"play":"true"})
 
-print("Firestore write successful!")
 
-# Fetch Firebase config
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+# Fetch OAuth Credentials
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+GOOGLE_SCOPES = os.getenv("GOOGLE_SCOPES").split(",")
+
+
+# Create OAuth flow using environment variables instead of client_secret.json
+flow = Flow.from_client_config(
+    {
+        "web": {
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "redirect_uris": [GOOGLE_REDIRECT_URI]
+        }
+    },
+    scopes=GOOGLE_SCOPES,
+)
+
+# Fetch Firebase Credentials
 config = {
-    "apiKey": get_env_variable("FIREBASE_API_KEY"),
-    "authDomain": get_env_variable("FIREBASE_AUTH_DOMAIN"),
-    "projectId": get_env_variable("FIREBASE_PROJECT_ID"),
-    "storageBucket": get_env_variable("FIREBASE_STORAGE_BUCKET"),
-    "messagingSenderId": get_env_variable("FIREBASE_MESSAGING_SENDER_ID"),
-    "appId": get_env_variable("FIREBASE_APP_ID"),
-    "measurementId": get_env_variable("FIREBASE_MEASUREMENT_ID"),
+    "apiKey": os.getenv("FIREBASE_API_KEY"),
+    "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN"),
+    "projectId": os.getenv("FIREBASE_PROJECT_ID"),
+    "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET"),
+    "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
+    "appId": os.getenv("FIREBASE_APP_ID"),
+    "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID"),
 }
+
 
 
 class User(flask_login.UserMixin): 
