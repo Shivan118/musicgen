@@ -50,6 +50,8 @@ cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 # Initialize Firebase using the credentials file
 cred = credentials.Certificate(cred_path)
+if not cred_path or not os.path.exists(cred_path):
+    raise FileNotFoundError(f"Invalid credentials path: {cred_path}")
 firebase_admin.initialize_app(cred, {
     'storageBucket': os.getenv("FIREBASE_STORAGE_BUCKET")
 })
