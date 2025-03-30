@@ -358,7 +358,7 @@ from multiprocessing import Process, Queue, Event
 import cv2
 import numpy as np
 import librosa
-import pyaudio
+#import pyaudio
 import time
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
@@ -373,6 +373,11 @@ from bokeh.models import HoverTool, ColumnDataSource
 from bokeh.embed import components
 from bokeh.io.export import export_png
 import io
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnablePassthrough
+from langchain.prompts import PromptTemplate
+from langchain_groq import ChatGroq
+import tempfile 
 
 f = open("abc.txt", "w")
 f.close()
@@ -386,6 +391,105 @@ f4.close()
 stop_event = Event()
 capture = [False]
 
+# Mood assessment questions
+MOOD_QUESTIONS = [
+    "On a scale of 1-5, how would you rate your current energy level?",
+    "On a scale of 1-5, how would you rate your current stress level?",
+    "On a scale of 1-5, how happy do you feel right now?",
+    "What emotions are you experiencing the most right now? (e.g., joy, anxiety, sadness)",
+    "What type of mood would you like to achieve?"
+]
+
+
+#Initialize LangChain components
+#llm = ChatOpenAI(model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY"))
+llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.5, api_key=os.getenv("GROQ_API_KEY"))
+music_prompt_template = """
+Based on the user's mood assessment:
+- Energy level: {energy}
+- Stress level: {stress}
+- Happiness level: {happiness}
+- Current emotions: {current_emotions}
+- Desired mood: {desired_mood}
+Musical preferences (if specified):
+- Preferred genre: {genre}
+- Preferred instruments: {instruments}
+- Preferred tempo: {tempo}
+- Preferred mood: {preferred_mood}
+Generate a detailed music prompt that would help the user transition from their current emotional state to their desired mood. 
+The prompt should incorporate the user's musical preferences if provided, while focusing on therapeutic musical qualities.
+Keep the description under 100 words and emphasize the healing aspects of the music.
+"""
+
+prompt = PromptTemplate(
+    input_variables=["energy", "stress", "happiness", "current_emotions", "desired_mood", 
+                    "genre", "instruments", "tempo", "preferred_mood"],
+    template=music_prompt_template
+)
+
+music_chain = RunnablePassthrough() | prompt | llm
+
+
+def generate_mock_music_prompt(responses, preferences):
+    """Generate a mock music prompt for demo purposes"""
+    energy_level = ["very low", "low", "moderate", "high", "very high"][int(responses["energy"]) - 1]
+    stress_level = ["very relaxed", "relaxed", "moderate stress", "stressed", "very stressed"][int(responses["stress"]) - 1]
+    happiness_level = ["unhappy", "somewhat unhappy", "neutral", "somewhat happy", "very happy"][int(responses["happiness"]) - 1]
+    
+    genre = preferences["genre"] if preferences["genre"] else "ambient"
+    instruments = preferences["instruments"] if preferences["instruments"] else "piano and strings"
+    tempo = preferences["tempo"] if preferences["tempo"] else "moderate"
+    
+    return f"A {tempo} {genre} composition featuring {instruments}. The piece begins with gentle harmonies that evoke a sense of {responses['desired_mood']}, gradually transitioning from the listener's current {stress_level} and {energy_level} energy state. The melodies are crafted to help transform feelings of {responses['current_emotions']} into a more {responses['desired_mood']} emotional state."
+
+
+def analyze_mood_and_generate_prompt(responses, preferences):
+    """Convert questionnaire responses and preferences into a music generation prompt using LangChain"""
+    try:
+        prompt_result = music_chain.invoke({
+            "energy": responses["energy"],
+            "stress": responses["stress"],
+            "happiness": responses["happiness"],
+            "current_emotions": responses["current_emotions"],
+            "desired_mood": responses["desired_mood"],
+            "genre": preferences["genre"] or "any",
+            "instruments": preferences["instruments"] or "any",
+            "tempo": preferences["tempo"] or "any",
+            "preferred_mood": preferences["preferred_mood"] or "any"
+        })
+        return prompt_result.content
+    except Exception as e:
+        return f"Error generating prompt: {str(e)}"
+
+# Create a directory for storing generated music files
+GENERATED_MUSIC_DIR = os.path.join(os.path.dirname(__file__), 'generated_music')
+os.makedirs(GENERATED_MUSIC_DIR, exist_ok=True)
+
+def generate_music_from_api(prompt, duration=10):
+    """Generate music using the MusicGen API"""
+    API_URL = "https://router.huggingface.co/hf-inference/models/facebook/musicgen-small"
+    headers = {"Authorization": f"Bearer {os.getenv('HF_API_KEY')}"}
+    
+    payload = {
+        "inputs": prompt
+    }
+    
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=300)
+        if response.status_code != 200:
+            return None, f"Error: API returned status code {response.status_code}", 0
+        
+        # Save the music file locally
+        file_name = f"music_{int(time.time())}.wav"
+        file_path = os.path.join(GENERATED_MUSIC_DIR, file_name)
+        with open(file_path, 'wb') as music_file:
+            music_file.write(response.content)
+        
+        print("Music file path:", file_path)
+        return url_for('serve_generated_music', filename=file_name), "Music generated successfully!"
+    except Exception as e:
+        return None, f"Error: {str(e)}", 0
+    
 #mapping the different emotions to different solfeggio frequencies
 def emotion_to_frequency(emotion, dominant_frequency = None):
     emotion_frequencies = {
@@ -581,9 +685,9 @@ def audio_processing(audio_file, start_time, id, user_name):
         get_audio_file(id, audio_file)
     y, sr = librosa.load(audio_file, sr=None)
     print("loaded")
-    p = pyaudio.PyAudio()
-    print("audio pyaudio")
-    stream = p.open(format=pyaudio.paFloat32, channels=1, rate=sr, output=True)
+    # p = pyaudio.PyAudio()
+    # print("audio pyaudio")
+    # stream = p.open(format=pyaudio.paFloat32, channels=1, rate=sr, output=True)
     print("open")
     try : 
         doc_ref = db.collection('Songs').document("OiCdogKheZX0bljWo1AG")
@@ -657,10 +761,10 @@ def audio_processing(audio_file, start_time, id, user_name):
             print("breaking")
             break
 
-        stream.write(current_chunk.astype(np.float32).tobytes())
+    #     stream.write(current_chunk.astype(np.float32).tobytes())
 
-    stream.stop_stream() #close the stream and terminate the audio system
-    stream.close()
+    # stream.stop_stream() #close the stream and terminate the audio system
+    # stream.close()
     os.remove(audio_file)
     now = datetime.now()
     print(now)
@@ -720,10 +824,10 @@ def upload_audio_processing(audio_file, start_time, id, user_name):
     print("cal")
     y, sr = librosa.load(audio_file, sr=None)
     print("loaded")
-    p = pyaudio.PyAudio()
-    print("audio pyaudio")
-    stream = p.open(format=pyaudio.paFloat32, channels=1, rate=sr, output=True)
-    print("open")
+    # p = pyaudio.PyAudio()
+    # print("audio pyaudio")
+    # stream = p.open(format=pyaudio.paFloat32, channels=1, rate=sr, output=True)
+    # print("open")
 
     doc = db.collection("SIgnal").document("YVNeDHCXVFvg0G3wZc6c")
 
@@ -792,10 +896,10 @@ def upload_audio_processing(audio_file, start_time, id, user_name):
             print("breaking")
             break
 
-        stream.write(current_chunk.astype(np.float32).tobytes())
+    #     stream.write(current_chunk.astype(np.float32).tobytes())
 
-    stream.stop_stream() #close the stream and terminate the audio system
-    stream.close()
+    # stream.stop_stream() #close the stream and terminate the audio system
+    # stream.close()
     os.remove(audio_file)
     now = datetime.now()
     print(now)
@@ -820,11 +924,11 @@ def upload_audio_no_processing(audio_file, start_time, id, user_name):
     print("cal")
 
     y, sr = librosa.load(audio_file, sr=None)
-    print("loaded")
-    p = pyaudio.PyAudio()
-    print("audio pyaudio")
-    stream = p.open(format=pyaudio.paFloat32, channels=1, rate=sr, output=True)
-    print("open")
+    # print("loaded")
+    # p = pyaudio.PyAudio()
+    # print("audio pyaudio")
+    # stream = p.open(format=pyaudio.paFloat32, channels=1, rate=sr, output=True)
+    # print("open")
 
     doc = db.collection("SIgnal").document("YVNeDHCXVFvg0G3wZc6c")
 
@@ -896,11 +1000,11 @@ def upload_audio_no_processing(audio_file, start_time, id, user_name):
             print("breaking")
             break
 
-        stream.write(chunk)
+    #     stream.write(chunk)
 
     
-    stream.stop_stream()
-    stream.close()
+    # stream.stop_stream()
+    # stream.close()
     os.remove(audio_file)
     now = datetime.now()
     print(now)
@@ -921,7 +1025,8 @@ def get_started():
         print(id)
         custom_audio = get_custom_audio(id)
         custom_audio_url = get_custom_audio_url(id, custom_audio)
-        return render_template("steps.html",flask_login = flask_login, step = "", logged_in="yes", user_details = user_details, id= "", custom_audio = custom_audio, custom_audio_url = custom_audio_url)
+        #return render_template("music_generator.html",flask_login = flask_login, logged_in="yes", user_details = user_details, mood_questions=MOOD_QUESTIONS)
+        return render_template("steps.html",flask_login = flask_login, steps="", logged_in="yes", user_details = user_details, id="", custom_audio = custom_audio, custom_audio_url = custom_audio_url)
     else:
         steps[0] = True
         return redirect("/google_login")
@@ -1152,6 +1257,13 @@ def contact_us():
     else:
         return render_template("contact_us.html",flask_login = flask_login, logged_in="no", user_details = user_details)
     
+@app.route('/music_generator', methods=["POST", "GET"])
+def music_generator():
+    if len(user_details):
+        return render_template("music_generator.html",flask_login = flask_login, logged_in="yes", user_details = user_details, mood_questions=MOOD_QUESTIONS)
+    else:
+        #return redirect("/google_login")
+        return render_template("music_generator.html",flask_login = flask_login, logged_in="no", user_details = user_details, mood_questions=MOOD_QUESTIONS)
 def get_session_data():
     user_session_data.clear()
     users_ref = db.collection("History")
@@ -1426,6 +1538,51 @@ def see_graphs():
         except Exception as e:
             return render_template('see_graph.html',flask_login = flask_login, script="", div="", sc="", di="", user_details = user_details, logged="yes")
 
+@app.route('/generate-music', methods=['POST'])
+def generate_music():
+    try:
+        data = request.json
+        
+        # Extract mood assessment responses and musical preferences
+        responses = {
+            "energy": data.get("energy", 3),
+            "stress": data.get("stress", 3),
+            "happiness": data.get("happiness", 3),
+            "current_emotions": data.get("current_emotions", ""),
+            "desired_mood": data.get("desired_mood", "")
+        }
+        
+        preferences = {
+            "genre": data.get("genre", ""),
+            "instruments": data.get("instruments", ""),
+            "tempo": data.get("tempo", ""),
+            "preferred_mood": data.get("preferred_mood", "")
+        }
+        
+        music_prompt = analyze_mood_and_generate_prompt(responses, preferences)
+        audio_path, message = generate_music_from_api(music_prompt)
+        
+        # For demo purposes, we'll simulate the API call
+        time.sleep(2)  # Simulate processing time
+        
+        # Generate a mock music prompt
+        music_prompt = generate_mock_music_prompt(responses, preferences)
+        
+        return jsonify({
+            "success": True,
+            "prompt": music_prompt,
+            "audio_url": audio_path,
+            "message": message,
+            
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+    
+
 @app.route('/faq', methods=["POST", "GET"])
 def faq():
     if len(user_details):
@@ -1468,7 +1625,7 @@ We have received a new submission from the "Reach Out to Us" form on our website
     &nbsp;&nbsp;&nbsp;&nbsp;<b>Message Details:</b><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>- Message :</b> {a["message"]}
     <br><br>
-Please review the submission and take the necessary actions to address the user’s request.
+Please review the submission and take the necessary actions to address the user's request.
 <br><br>
 Thank you,
 The SonicSerenity Team
@@ -1485,6 +1642,10 @@ The SonicSerenity Team
             return render_template("contact_us.html",flask_login = flask_login, logged_in="yes", user_details = user_details, alert_msg = "yes")
         else:
             return render_template("contact_us.html",flask_login = flask_login, logged_in="no", user_details = user_details, alert_msg = "no")
+
+@app.route('/generated_music/<filename>')
+def serve_generated_music(filename):
+    return send_from_directory(GENERATED_MUSIC_DIR, filename)
 
 if __name__ == '__main__':
     app.run(debug = True,  host='0.0.0.0')
