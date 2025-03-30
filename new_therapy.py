@@ -52,13 +52,28 @@ mail = Mail(app)
 encoded_creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 if not encoded_creds:
-    raise ValueError("FIREBASE_CREDENTIALS_BASE64 is not set!")
+    raise ValueError("GOOGLE_APPLICATION_CREDENTIALS is not set!")
 
-# Decode the Base64 string into a JSON dictionary
-decoded_creds = json.loads(base64.b64decode(encoded_creds).decode())
+try:
+    # Decode the Base64 string
+    decoded_bytes = base64.b64decode(encoded_creds)
+
+    # Validate UTF-8 encoding
+    decoded_str = decoded_bytes.decode("utf-8")  
+
+    # Load the JSON
+    decoded_creds = json.loads(decoded_str)
+    
+    print("✅ Successfully decoded and loaded JSON credentials.")
+
+except UnicodeDecodeError:
+    raise ValueError("❌ Base64-decoded credentials are not valid UTF-8. Check encoding.")
+
+except json.JSONDecodeError:
+    raise ValueError("❌ Decoded string is not valid JSON. Check your Base64 input.")
 
 # Initialize Firebase using the decoded credentials
-cred = credentials.Certificate(decoded_creds)
+cred = credentials.Certificate(decoded_creds)  # 🔴 ERROR: This expects a file path
 firebase_admin.initialize_app(cred, {
     'storageBucket': os.getenv("FIREBASE_STORAGE_BUCKET")
 })
